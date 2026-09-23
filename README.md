@@ -3,6 +3,12 @@
 TracTrail is an Android app for tracking daily habits, workouts, meals/nutrition, and
 personal analytics — all in one place. Built with Kotlin and Jetpack Compose.
 
+## Screenshots
+
+| Habits | Workouts | Meals | Analytics |
+|---|---|---|---|
+| ![Habits](screenshots/habits.png) | ![Workouts](screenshots/workouts.png) | ![Meals](screenshots/meals.png) | ![Analytics](screenshots/analytics.png) |
+
 ## Features
 
 - **Habits** — Create and track daily habits (Health, Fitness, Productivity, and more),
