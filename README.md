@@ -7,7 +7,7 @@ personal analytics — all in one place. Built with Kotlin and Jetpack Compose.
 
 | Habits | Workouts | Meals | Analytics |
 |---|---|---|---|
-| ![Habits](screenshots/habits.png) | ![Workouts](screenshots/workouts.png) | ![Meals](screenshots/meals.png) | ![Analytics](screenshots/analytics.png) |
+| ![Habits](screenshots/habits.jpg) | ![Workouts](screenshots/workouts.jpg) | ![Meals](screenshots/meals.jpg) | ![Analytics](screenshots/analytics.jpg) |
 
 ## Features
 
