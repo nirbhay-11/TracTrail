@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.data.model.FrequencyType
 import com.example.myapplication.data.model.HabitCategory
+import com.example.myapplication.data.model.MealType
 import com.example.myapplication.data.model.WorkoutCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,9 +20,10 @@ import java.time.LocalDate
         HabitEntity::class,
         HabitLogEntity::class,
         WorkoutEntity::class,
-        WorkoutExerciseEntity::class
+        WorkoutExerciseEntity::class,
+        MealEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -29,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun habitDao(): HabitDao
     abstract fun workoutDao(): WorkoutDao
+    abstract fun mealDao(): MealDao
 
     companion object {
         @Volatile
@@ -47,7 +50,11 @@ abstract class AppDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             scope.launch(Dispatchers.IO) {
-                                populateInitialData(databaseRef.habitDao(), databaseRef.workoutDao())
+                                populateInitialData(
+                                    databaseRef.habitDao(),
+                                    databaseRef.workoutDao(),
+                                    databaseRef.mealDao()
+                                )
                             }
                         }
                     })
@@ -58,7 +65,11 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private suspend fun populateInitialData(habitDao: HabitDao, workoutDao: WorkoutDao) {
+        private suspend fun populateInitialData(
+            habitDao: HabitDao,
+            workoutDao: WorkoutDao,
+            mealDao: MealDao
+        ) {
             if (habitDao.getHabitsCount() == 0) {
                 val initialHabits = listOf(
                     HabitEntity(
@@ -183,35 +194,50 @@ abstract class AppDatabase : RoomDatabase() {
                         isCompleted = false
                     )
                 )
+            }
 
-                // Sample Workout 3: HIIT Fat Burner
-                val w3Id = workoutDao.insertWorkout(
-                    WorkoutEntity(
-                        title = "Core & HIIT Circuit",
-                        category = WorkoutCategory.HIIT,
-                        durationMinutes = 25,
-                        caloriesBurned = 220,
+            if (mealDao.getMealsCount() == 0) {
+                val todayStr = LocalDate.now().toString()
+
+                mealDao.insertMeal(
+                    MealEntity(
+                        name = "Avocado & Poached Eggs Toast",
+                        mealType = MealType.BREAKFAST,
+                        calories = 420,
+                        proteinGrams = 18.5,
+                        carbsGrams = 34.0,
+                        fatGrams = 22.0,
                         date = todayStr,
-                        notes = "40 secs on, 20 secs off.",
-                        isCompleted = false
+                        time = "08:15 AM",
+                        notes = "Whole grain sourdough, 2 eggs"
                     )
                 )
-                workoutDao.insertExercise(
-                    WorkoutExerciseEntity(
-                        workoutId = w3Id,
-                        name = "Burpees",
-                        sets = 4,
-                        repsOrDistance = "45 sec",
-                        isCompleted = false
+
+                mealDao.insertMeal(
+                    MealEntity(
+                        name = "Grilled Chicken & Quinoa Bowl",
+                        mealType = MealType.LUNCH,
+                        calories = 580,
+                        proteinGrams = 46.0,
+                        carbsGrams = 52.0,
+                        fatGrams = 16.0,
+                        date = todayStr,
+                        time = "01:00 PM",
+                        notes = "Olive oil dressing, mixed greens"
                     )
                 )
-                workoutDao.insertExercise(
-                    WorkoutExerciseEntity(
-                        workoutId = w3Id,
-                        name = "Plank Hold",
-                        sets = 3,
-                        repsOrDistance = "60 sec",
-                        isCompleted = false
+
+                mealDao.insertMeal(
+                    MealEntity(
+                        name = "Greek Yogurt & Almonds",
+                        mealType = MealType.SNACK,
+                        calories = 220,
+                        proteinGrams = 15.0,
+                        carbsGrams = 14.0,
+                        fatGrams = 11.0,
+                        date = todayStr,
+                        time = "04:30 PM",
+                        notes = "High protein snack"
                     )
                 )
             }

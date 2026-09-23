@@ -3,6 +3,7 @@ package com.example.myapplication.data.db
 import androidx.room.TypeConverter
 import com.example.myapplication.data.model.FrequencyType
 import com.example.myapplication.data.model.HabitCategory
+import com.example.myapplication.data.model.MealType
 import com.example.myapplication.data.model.WorkoutCategory
 
 class Converters {
@@ -34,5 +35,15 @@ class Converters {
         WorkoutCategory.valueOf(value)
     } catch (e: Exception) {
         WorkoutCategory.STRENGTH
+    }
+
+    @TypeConverter
+    fun fromMealType(type: MealType): String = type.name
+
+    @TypeConverter
+    fun toMealType(value: String): MealType = try {
+        MealType.valueOf(value)
+    } catch (e: Exception) {
+        MealType.BREAKFAST
     }
 }
