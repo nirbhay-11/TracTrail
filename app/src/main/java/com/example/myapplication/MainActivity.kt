@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.example.myapplication.data.db.AppDatabase
 import com.example.myapplication.data.repository.HabitRepository
 import com.example.myapplication.data.repository.MealRepository
@@ -15,6 +17,8 @@ import com.example.myapplication.ui.viewmodel.HabitViewModel
 import com.example.myapplication.ui.viewmodel.HabitViewModelFactory
 import com.example.myapplication.ui.viewmodel.MealViewModel
 import com.example.myapplication.ui.viewmodel.MealViewModelFactory
+import com.example.myapplication.ui.viewmodel.ThemeViewModel
+import com.example.myapplication.ui.viewmodel.ThemeViewModelFactory
 import com.example.myapplication.ui.viewmodel.WorkoutViewModel
 import com.example.myapplication.ui.viewmodel.WorkoutViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -42,15 +46,22 @@ class MainActivity : ComponentActivity() {
         MealViewModelFactory(mealRepository)
     }
 
+    private val themeViewModel: ThemeViewModel by viewModels {
+        ThemeViewModelFactory(application)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
+            val currentThemeMode by themeViewModel.themeMode.collectAsState()
+
+            MyApplicationTheme(themeMode = currentThemeMode) {
                 MainScreen(
                     habitViewModel = habitViewModel,
                     workoutViewModel = workoutViewModel,
-                    mealViewModel = mealViewModel
+                    mealViewModel = mealViewModel,
+                    themeViewModel = themeViewModel
                 )
             }
         }
