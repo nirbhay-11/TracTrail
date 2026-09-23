@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LightMode
@@ -33,10 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.myapplication.data.db.HabitEntity
 import com.example.myapplication.data.repository.HabitItemState
 import com.example.myapplication.ui.components.AddEditHabitDialog
 import com.example.myapplication.ui.components.HabitDetailDialog
+import com.example.myapplication.ui.components.TracTrailLogo
 import com.example.myapplication.ui.theme.ThemeMode
 import com.example.myapplication.ui.viewmodel.HabitViewModel
 import com.example.myapplication.ui.viewmodel.MealViewModel
@@ -51,7 +52,7 @@ fun MainScreen(
     mealViewModel: MealViewModel,
     themeViewModel: ThemeViewModel
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) } // 0 = Today, 1 = Habits, 2 = Workouts, 3 = Meals, 4 = Analytics
+    var selectedTab by remember { mutableIntStateOf(0) } // 0 = Habits, 1 = Workouts, 2 = Meals, 3 = Analytics
 
     val currentThemeMode by themeViewModel.themeMode.collectAsState()
     var showThemeMenu by remember { mutableStateOf(false) }
@@ -65,15 +66,14 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = when (selectedTab) {
+                    TracTrailLogo(
+                        showIcon = false,
+                        subtitleText = when (selectedTab) {
                             0 -> "Habit Tracker"
-                            1 -> "My Habits"
-                            2 -> "Workout Tracker"
-                            3 -> "Meal & Nutrition Tracker"
-                            else -> "Analytics"
-                        },
-                        fontWeight = FontWeight.Bold
+                            1 -> "Workout Tracker"
+                            2 -> "Meal & Nutrition Tracker"
+                            else -> "Analytics & Insights"
+                        }
                     )
                 },
                 actions = {
@@ -129,37 +129,31 @@ fun MainScreen(
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    icon = { Icon(Icons.Default.CheckCircle, contentDescription = "Today") },
-                    label = { Text("Today") }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.List, contentDescription = "Habits") },
                     label = { Text("Habits") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 },
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.FitnessCenter, contentDescription = "Workouts") },
                     label = { Text("Workouts") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 },
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
                     icon = { Icon(Icons.Default.Restaurant, contentDescription = "Meals") },
                     label = { Text("Meals") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 4,
-                    onClick = { selectedTab = 4 },
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
                     icon = { Icon(Icons.Default.BarChart, contentDescription = "Analytics") },
                     label = { Text("Analytics") }
                 )
             }
         },
         floatingActionButton = {
-            if (selectedTab == 0 || selectedTab == 1) {
+            if (selectedTab == 0) {
                 FloatingActionButton(
                     onClick = {
                         habitToEdit = null
@@ -183,24 +177,18 @@ fun MainScreen(
                 },
                 modifier = Modifier.padding(innerPadding)
             )
-            1 -> HabitListScreen(
-                viewModel = habitViewModel,
-                onEditHabit = { habit ->
-                    habitToEdit = habit
-                    showAddEditDialog = true
-                },
-                modifier = Modifier.padding(innerPadding)
-            )
-            2 -> WorkoutsScreen(
+            1 -> WorkoutsScreen(
                 viewModel = workoutViewModel,
                 modifier = Modifier.padding(innerPadding)
             )
-            3 -> MealsScreen(
+            2 -> MealsScreen(
                 viewModel = mealViewModel,
                 modifier = Modifier.padding(innerPadding)
             )
-            4 -> AnalyticsScreen(
-                viewModel = habitViewModel,
+            3 -> AnalyticsScreen(
+                habitViewModel = habitViewModel,
+                workoutViewModel = workoutViewModel,
+                mealViewModel = mealViewModel,
                 modifier = Modifier.padding(innerPadding)
             )
         }
